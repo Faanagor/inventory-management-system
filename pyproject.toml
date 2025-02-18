@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "inventory-management-system"
+version = "0.1.0"
+description = "REST API to manage the inventory of a retail chain."
+authors = ["FAGUIRRE <fabio.aguirre@globant.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.8"
+uvicorn = "^0.34.0"
+httpx = "^0.28.1"
+python-dotenv = "^1.0.1"
+pydantic = "^2.10.6"
+sqlalchemy = "^2.0.38"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+flake8 = "^7.1.2"
+isort = "^6.0.0"
+mypy = "^1.15.0"
+pre-commit = "^4.1.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.4"
+coverage = "^7.6.12"
+pytest-mock = "^3.14.0"
+pytest-asyncio = "^0.25.3"
+pytest-cov = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
