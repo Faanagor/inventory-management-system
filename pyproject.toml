@@ -12,9 +12,9 @@ fastapi = "^0.115.8"
 uvicorn = "^0.34.0"
 httpx = "^0.28.1"
 python-dotenv = "^1.0.1"
-pydantic = "^2.10.6"
+pydantic = {extras = ["mypy"], version = "^2.10.6"}
 sqlalchemy = "^2.0.38"
-
+flake8 = "^7.1.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
@@ -23,13 +23,51 @@ isort = "^6.0.0"
 mypy = "^1.15.0"
 pre-commit = "^4.1.0"
 
-
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.4"
 coverage = "^7.6.12"
 pytest-mock = "^3.14.0"
 pytest-asyncio = "^0.25.3"
 pytest-cov = "^6.0.0"
+
+[tool.black]
+line-length = 120
+target-version = ["py310", "py312"]
+
+[tool.flake8]
+max-line-length = 120
+ignore = ["E203, W503, W504"]
+per-file-ignores = ["__init__.py:F401"]
+max-complexity = 10
+exclude = [".venv/", "venv", ".venv"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+sections = ["STDLIB", "THIRDPARTY", "LOCALFOLDER", "FIRSTPARTY"]
+no_lines_before = "FIRSTPARTY"
+known_third_party = ["fastapi", "pydantic", "sqlalchemy", "httpx", "pytest"]
+known_first_party = ["inventory_management_system"]
+import_heading_first_party = "App Imports"
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+files = "inventory_management_system"
+ignore_missing_imports = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+exclude = "(.git|migrations/|.venv/|build/|dist/)" 
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
 
 [build-system]
 requires = ["poetry-core"]

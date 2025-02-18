@@ -4,24 +4,25 @@ TEST = $(POETRY) run pytest
 TEST_DIR = tests/
 COV_REPORT_TERM = --cov-report=term-missing
 COV_REPORT_HTML = --cov-report=html
-APP = app
+APP = inventory_management_system
 COV_PACKAGE = --cov=$(APP)
 COV_FAILED_PERCENT = 85
 COV_FAILED_UNDER = --cov-fail-under=$(COV_FAILED_PERCENT)
 BLACK = $(POETRY) run black
 ISORT = $(POETRY) run isort
-FLAKE8 = $(POETRY) run flake8
+FLAKE8 = $(POETRY) run flake8 --exclude=.venv
 MYPY = $(POETRY) run mypy
+PRE_COMMIT = $(POETRY) run pre-commit
 
 .PHONY: install
 install:
 	which $(POETRY) || pip install $(POETRY)
 	$(POETRY) install --with dev,test
-	$(POETRY) run pre-commit install
+	$(PRE_COMMIT) install
 
 .PHONY: pre-commit
 pre-commit:
-	$(POETRY) run pre-commit run --all-files
+	$(PRE_COMMIT) run --all-files
 
 .PHONY: test
 test:
@@ -35,9 +36,13 @@ test-coverage:
 test-coverage-html:
 	$(TEST) $(COV_PACKAGE) $(COV_REPORT_HTML) $(TEST_DIR) 
 
+.PHONY: format
+format:
+	$(BLACK) . && $(ISORT) .
+
 .PHONY: lint
 lint:
-	$(BLACK) . && $(ISORT) . && $(FLAKE8) . && $(MYPY)
+	$(FLAKE8) . && $(MYPY)
 
 .PHONY: run
 run:
@@ -47,3 +52,6 @@ run:
 clean:
 	find . -name "*.pyc" -delete
 	find . -name "__pycache__" -exec rm -rf {} +
+
+.PHONY: all
+all: format lint test
