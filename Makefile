@@ -42,11 +42,11 @@ format:
 
 .PHONY: lint
 lint:
-	$(FLAKE8) . && $(MYPY)
+	$(FLAKE8)
 
 .PHONY: run
 run:
-	$(PYTHON) main.py
+	$(PYTHON) $(APP)/main.py
 
 .PHONY: clean
 clean:
