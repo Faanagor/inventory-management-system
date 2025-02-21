@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import AsyncGenerator
 
 import uvicorn
 from api.v1.routes import products
@@ -10,13 +11,14 @@ app = FastAPI(title="Inventory Management System", version="1.0.0")
 app.include_router(products.router, prefix="/api")
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Aplica migraciones al iniciar la API."""
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    """Manejador de ciclo de vida para aplicar migraciones al iniciar la API."""
     logging.info("⏳ Aplicando migraciones de Alembic...")
     loop = asyncio.get_running_loop()
     await loop.run_in_executor(None, apply_migrations)
     logging.info("✅ Migraciones aplicadas correctamente.")
+    yield  # Aquí se ejecuta la aplicación
+    logging.info("🛑 Cerrando la aplicación...")
 
 
 @app.get("/")

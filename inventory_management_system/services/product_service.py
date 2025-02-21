@@ -4,12 +4,12 @@ from fastapi import HTTPException
 from models.product import Product
 from schemas.product import ProductCreate, ProductUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
+from sqlalchemy.future import select
 
 
-# Obtener todos los productos con filtros y paginación
-def get_products(
-    db: Session,
+# Obtener todos los productos con filtros y paginación (ASYNC)
+async def get_products(
+    db: AsyncSession,
     category: str = None,
     min_price: float = None,
     max_price: float = None,
@@ -17,22 +17,26 @@ def get_products(
     skip: int = 0,
     limit: int = 10,
 ):
-    query = db.query(Product)
+    query = select(Product)
     if category:
-        query = query.filter(Product.category == category)
+        query = query.where(Product.category == category)
     if min_price:
-        query = query.filter(Product.price >= min_price)
+        query = query.where(Product.price >= min_price)
     if max_price:
-        query = query.filter(Product.price <= max_price)
+        query = query.where(Product.price <= max_price)
     if stock is not None:
-        query = query.filter(Product.stock >= stock)
+        query = query.where(Product.stock >= stock)
 
-    return query.offset(skip).limit(limit).all()
+    query = query.offset(skip).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()
 
 
-# Obtener un producto por ID
-def get_product_by_id(db: Session, product_id: str):
-    product = db.query(Product).filter(Product.id == product_id).first()
+# Obtener un producto por ID (ASYNC)
+async def get_product_by_id(db: AsyncSession, product_id: str):
+    query = select(Product).where(Product.id == product_id)
+    result = await db.execute(query)
+    product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
@@ -50,28 +54,35 @@ async def create_product(db: AsyncSession, product_data: ProductCreate):
         stock=product_data.stock,
     )
     db.add(new_product)
-    await db.commit()  # ✅ Ahora es asíncrono
-    await db.refresh(new_product)  # ✅ También es asíncrono
+    await db.commit()
+    await db.refresh(new_product)
     return new_product
 
 
-# Actualizar producto existente
-def update_product(db: Session, product_id: str, product_data: ProductUpdate):
-    product = db.query(Product).filter(Product.id == product_id).first()
+# Actualizar producto existente (ASYNC)
+async def update_product(db: AsyncSession, product_id: str, product_data: ProductUpdate):
+    query = select(Product).where(Product.id == product_id)
+    result = await db.execute(query)
+    product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
+
     for key, value in product_data.dict(exclude_unset=True).items():
         setattr(product, key, value)
-    db.commit()
-    db.refresh(product)
+
+    await db.commit()
+    await db.refresh(product)
     return product
 
 
-# Eliminar un producto
-def delete_product(db: Session, product_id: str):
-    product = db.query(Product).filter(Product.id == product_id).first()
+# Eliminar un producto (ASYNC)
+async def delete_product(db: AsyncSession, product_id: str):
+    query = select(Product).where(Product.id == product_id)
+    result = await db.execute(query)
+    product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    db.delete(product)
-    db.commit()
+
+    await db.delete(product)
+    await db.commit()
     return {"message": "Product deleted successfully"}
