@@ -1,16 +1,12 @@
-import asyncio
-
-from db.database import engine
-
-from alembic import command, config
+import logging
+import subprocess
 
 
-async def apply_migrations():
-    """Aplica migraciones de Alembic de manera automática."""
-    alembic_cfg = config.Config("alembic.ini")
-    async with engine.begin() as conn:
-        await conn.run_sync(command.upgrade, alembic_cfg, "head")
-
-
-if __name__ == "__main__":
-    asyncio.run(apply_migrations())
+def apply_migrations():
+    """Ejecuta las migraciones de Alembic de manera sincrónica."""
+    try:
+        logging.info("⏳ Ejecutando migraciones con Alembic...")
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        logging.info("✅ Migraciones aplicadas correctamente.")
+    except subprocess.CalledProcessError as e:
+        logging.error(f"⚠️ Error al ejecutar las migraciones: {e}")

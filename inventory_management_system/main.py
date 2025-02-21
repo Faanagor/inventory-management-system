@@ -1,21 +1,22 @@
+import asyncio
+import logging
+
 import uvicorn
 from api.v1.routes import products
-from db.database import Base, engine
 from db.migrations import apply_migrations
 from fastapi import FastAPI
 
-# Crea las tablas en la base de datos
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(title="Inventory Management System", version="1.0.0")
-
-app.include_router(products.router, prefix="/api/v1")
+app.include_router(products.router, prefix="/api")
 
 
 @app.on_event("startup")
 async def startup_event():
-    """Ejecutar migraciones al iniciar FastAPI"""
-    await apply_migrations()
+    """Aplica migraciones al iniciar la API."""
+    logging.info("⏳ Aplicando migraciones de Alembic...")
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, apply_migrations)
+    logging.info("✅ Migraciones aplicadas correctamente.")
 
 
 @app.get("/")
@@ -24,4 +25,4 @@ def read_root():
 
 
 if __name__ == "__main__":
-    uvicorn.run("inventory_management_system.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
