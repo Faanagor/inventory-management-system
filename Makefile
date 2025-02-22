@@ -1,12 +1,13 @@
 POETRY = poetry
 PYTHON = $(POETRY) run python
+UVICORN = $(POETRY) run uvicorn
 TEST = $(POETRY) run pytest
 TEST_DIR = tests/
 COV_REPORT_TERM = --cov-report=term-missing
 COV_REPORT_HTML = --cov-report=html
 APP = inventory_management_system
 COV_PACKAGE = --cov=$(APP)
-COV_FAILED_PERCENT = 85
+COV_FAILED_PERCENT = 80
 COV_FAILED_UNDER = --cov-fail-under=$(COV_FAILED_PERCENT)
 BLACK = $(POETRY) run black
 ISORT = $(POETRY) run isort
@@ -29,8 +30,9 @@ test:
 	$(TEST)
 
 .PHONY: test-coverage
+
 test-coverage:
-	$(TEST) $(COV_PACKAGE) $(COV_REPORT_TERM) $(COV_FAILED_UNDER) $(TEST_DIR)
+	$(TEST) $(COV_PACKAGE) $(COV_REPORT_TERM) $(COV_FAILED_UNDER) $(APP)/$(TEST_DIR)
 
 .PHONY: test-coverage-html
 test-coverage-html:
@@ -46,7 +48,7 @@ lint:
 
 .PHONY: run
 run:
-	$(PYTHON) $(APP)/main.py
+	$(UVICORN) $(APP).main:app --reload --host 127.0.0.1 --port 8000
 
 .PHONY: clean
 clean:

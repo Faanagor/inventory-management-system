@@ -1,5 +1,6 @@
-from models import Base
 from sqlalchemy import Column, Integer, String
+
+from inventory_management_system.models import Base
 
 
 class Inventory(Base):

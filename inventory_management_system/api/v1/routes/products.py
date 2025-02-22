@@ -1,16 +1,17 @@
 from typing import List, Optional
 
-from db.database import get_db
 from fastapi import APIRouter, Depends
-from schemas.product import ProductCreate, ProductResponse, ProductUpdate
-from services.product_service import (
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from inventory_management_system.db.database import get_db
+from inventory_management_system.schemas.product import ProductCreate, ProductResponse, ProductUpdate
+from inventory_management_system.services.product_service import (
     create_product,
     delete_product,
     get_product_by_id,
     get_products,
     update_product,
 )
-from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/products", tags=["Products"])
 

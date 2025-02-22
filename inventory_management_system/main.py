@@ -3,9 +3,10 @@ import logging
 from typing import AsyncGenerator
 
 import uvicorn
-from api.v1.routes import products
-from db.migrations import apply_migrations
 from fastapi import FastAPI
+
+from inventory_management_system.api.v1.routes import products
+from inventory_management_system.db.migrations import apply_migrations
 
 app = FastAPI(title="Inventory Management System", version="1.0.0")
 app.include_router(products.router, prefix="/api")

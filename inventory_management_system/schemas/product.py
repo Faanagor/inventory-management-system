@@ -1,4 +1,5 @@
 from typing import Optional
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -17,11 +18,19 @@ class ProductCreate(ProductBase):
 
 
 class ProductUpdate(ProductBase):
-    name: Optional[str] = None  # Todos opcionales para actualizaciones
+    name: Optional[str] = None
+    description: Optional[str] = None
+    category: Optional[str] = None
     price: Optional[float] = None
     sku: Optional[str] = None
     stock: Optional[int] = None
 
 
-class ProductResponse(ProductBase):
-    id: str
+class ProductResponse(BaseModel):
+    id: UUID
+    name: str
+    description: str
+    category: str
+    price: float = Field(gt=0, description="Price must be great than or equal to 0")
+    sku: str
+    stock: int = Field(gt=0, description="Stock must be great than or equal to 0")

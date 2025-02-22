@@ -1,9 +1,10 @@
 import os
 
 from dotenv import load_dotenv
-from models import Base
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
+
+from inventory_management_system.models import Base
 
 # Cargar variables de entorno
 load_dotenv()

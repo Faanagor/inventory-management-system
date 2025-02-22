@@ -1,10 +1,11 @@
 import uuid
 
 from fastapi import HTTPException
-from models.product import Product
-from schemas.product import ProductCreate, ProductUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+
+from inventory_management_system.models.product import Product
+from inventory_management_system.schemas.product import ProductCreate, ProductUpdate
 
 
 # Obtener todos los productos con filtros y paginación (ASYNC)
@@ -66,8 +67,9 @@ async def update_product(db: AsyncSession, product_id: str, product_data: Produc
     product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-
-    for key, value in product_data.dict(exclude_unset=True).items():
+    if product_data.price is not None and product_data.price <= 0:
+        raise HTTPException(status_code=422, detail="Price must be greater than zero")
+    for key, value in product_data.model_dump(exclude_unset=True).items():
         setattr(product, key, value)
 
     await db.commit()
