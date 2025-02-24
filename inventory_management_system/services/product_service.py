@@ -7,6 +7,8 @@ from sqlalchemy.future import select
 from inventory_management_system.models.product import Product
 from inventory_management_system.schemas.product import ProductCreate, ProductUpdate
 
+UUID = uuid.UUID
+
 
 # Obtener todos los productos con filtros y paginación (ASYNC)
 async def get_products(
@@ -34,7 +36,7 @@ async def get_products(
 
 
 # Obtener un producto por ID (ASYNC)
-async def get_product_by_id(db: AsyncSession, product_id: str):
+async def get_product_by_id(db: AsyncSession, product_id: UUID):
     query = select(Product).where(Product.id == product_id)
     result = await db.execute(query)
     product = result.scalar_one_or_none()
@@ -46,13 +48,12 @@ async def get_product_by_id(db: AsyncSession, product_id: str):
 # Crear un nuevo producto (ASYNC)
 async def create_product(db: AsyncSession, product_data: ProductCreate):
     new_product = Product(
-        id=str(uuid.uuid4()),
+        id=uuid.uuid4(),
         name=product_data.name,
         description=product_data.description,
         category=product_data.category,
         price=product_data.price,
         sku=product_data.sku,
-        stock=product_data.stock,
     )
     db.add(new_product)
     await db.commit()
@@ -61,15 +62,19 @@ async def create_product(db: AsyncSession, product_data: ProductCreate):
 
 
 # Actualizar producto existente (ASYNC)
-async def update_product(db: AsyncSession, product_id: str, product_data: ProductUpdate):
+async def update_product(db: AsyncSession, product_id: UUID, product_data: ProductUpdate):
+    if isinstance(product_id, str):
+        try:
+            product_id = UUID(product_id)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid product_id format")
     query = select(Product).where(Product.id == product_id)
     result = await db.execute(query)
     product = result.scalar_one_or_none()
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-    if product_data.price is not None and product_data.price <= 0:
-        raise HTTPException(status_code=422, detail="Price must be greater than zero")
-    for key, value in product_data.model_dump(exclude_unset=True).items():
+    update_fields = product_data.model_dump(exclude_unset=True)
+    for key, value in update_fields.items():
         setattr(product, key, value)
 
     await db.commit()
@@ -78,7 +83,7 @@ async def update_product(db: AsyncSession, product_id: str, product_data: Produc
 
 
 # Eliminar un producto (ASYNC)
-async def delete_product(db: AsyncSession, product_id: str):
+async def delete_product(db: AsyncSession, product_id: UUID):
     query = select(Product).where(Product.id == product_id)
     result = await db.execute(query)
     product = result.scalar_one_or_none()

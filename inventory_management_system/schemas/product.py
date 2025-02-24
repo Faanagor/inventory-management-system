@@ -6,31 +6,29 @@ from pydantic import BaseModel, Field
 
 class ProductBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
-    description: Optional[str] = None
-    category: Optional[str] = None
-    price: float = Field(..., gt=0)  # El precio debe ser mayor a 0
+    description: str = Field(..., min_length=5, max_length=500)
+    category: str = Field(..., min_length=1, max_length=50)
+    price: float = Field(..., gt=0, description="Price must be greater than 0")
     sku: str = Field(..., min_length=1)
-    stock: int = Field(..., ge=0)  # No puede ser negativo
 
 
 class ProductCreate(ProductBase):
     pass  # Igual a ProductBase, pero puede extenderse si es necesario
 
 
-class ProductUpdate(ProductBase):
-    name: Optional[str] = None
-    description: Optional[str] = None
-    category: Optional[str] = None
-    price: Optional[float] = None
-    sku: Optional[str] = None
-    stock: Optional[int] = None
+class ProductUpdate(BaseModel):
+    """Esquema para actualizar un producto. Todos los campos son opcionales."""
+
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    description: Optional[str] = Field(None, min_length=5, max_length=500)
+    category: Optional[str] = Field(None, min_length=1, max_length=50)
+    price: Optional[float] = Field(None, gt=0, description="Price must be greater than 0")
+    sku: Optional[str] = Field(None, min_length=1)
 
 
-class ProductResponse(BaseModel):
+class ProductResponse(ProductBase):
     id: UUID
-    name: str
-    description: str
-    category: str
-    price: float = Field(gt=0, description="Price must be great than or equal to 0")
-    sku: str
-    stock: int = Field(gt=0, description="Stock must be great than or equal to 0")
+    stock: Optional[int] = Field(None, description="Stock total calculado desde inventory")  # 🔹 Stock opcional
+
+    class Config:
+        orm_mode = True

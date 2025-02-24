@@ -37,6 +37,7 @@ def do_run_migrations(connection):
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
+        transaction_per_migration=True,
         render_as_batch=True,  # Necesario para SQLite
     )
     with context.begin_transaction():

@@ -1,4 +1,5 @@
 from typing import List, Optional
+from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,7 +14,7 @@ from inventory_management_system.services.product_service import (
     update_product,
 )
 
-router = APIRouter(prefix="/products", tags=["Products"])
+router = APIRouter(tags=["Products"])
 
 
 # Obtener todos los productos con filtros y paginación (ASYNC)
@@ -32,7 +33,7 @@ async def read_products(
 
 # Obtener detalle de un producto (ASYNC)
 @router.get("/{product_id}", response_model=ProductResponse)
-async def read_product(product_id: str, db: AsyncSession = Depends(get_db)):
+async def read_product(product_id: UUID, db: AsyncSession = Depends(get_db)):
     return await get_product_by_id(db, product_id)
 
 
@@ -44,11 +45,11 @@ async def create_new_product(product: ProductCreate, db: AsyncSession = Depends(
 
 # Actualizar un producto existente (ASYNC)
 @router.put("/{product_id}", response_model=ProductResponse)
-async def update_existing_product(product_id: str, product_data: ProductUpdate, db: AsyncSession = Depends(get_db)):
+async def update_existing_product(product_id: UUID, product_data: ProductUpdate, db: AsyncSession = Depends(get_db)):
     return await update_product(db, product_id, product_data)
 
 
 # Eliminar un producto (ASYNC)
 @router.delete("/{product_id}")
-async def delete_existing_product(product_id: str, db: AsyncSession = Depends(get_db)):
+async def delete_existing_product(product_id: UUID, db: AsyncSession = Depends(get_db)):
     return await delete_product(db, product_id)

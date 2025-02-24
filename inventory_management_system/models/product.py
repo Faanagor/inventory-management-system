@@ -1,18 +1,21 @@
 import uuid
 
-from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy import Column, Float, String
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 
-# from sqlalchemy.orm import declarative_base
 from inventory_management_system.models import Base
 
 
 class Product(Base):
     __tablename__ = "products"
 
-    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))  # UUID como string
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     name = Column(String, index=True, nullable=False)
-    description = Column(String, nullable=True)
-    category = Column(String, nullable=True)
+    description = Column(String, nullable=False)
+    category = Column(String, nullable=False)
     price = Column(Float, nullable=False)
     sku = Column(String, nullable=False, unique=True)
-    stock = Column(Integer, nullable=False, default=0)  # Se agrega stock con default 0
+
+    # 🔹 Relación con Inventory (stock ahora se maneja desde inventory)
+    inventory = relationship("Inventory", back_populates="product", cascade="all, delete-orphan")
