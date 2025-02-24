@@ -10,7 +10,7 @@ from inventory_management_system.db.migrations import apply_migrations
 
 app = FastAPI(title="Inventory Management System", version="1.0.0")
 app.include_router(products.router, prefix="/api/products")
-app.include_router(inventory.router, prefix="/api/inventory")
+app.include_router(inventory.router, prefix="/api")
 
 
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
