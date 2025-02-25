@@ -13,8 +13,8 @@ class Inventory(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
     product_id = Column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"), index=True, nullable=False)
     store_id = Column(UUID(as_uuid=True), index=True, nullable=False)
-    quantity = Column(Integer, nullable=False, default=0)
-    min_stock = Column(Integer, nullable=False, default=1)
+    quantity = Column(Integer, nullable=False)
+    min_stock = Column(Integer, nullable=False)
 
     # 🔹 Relación con Product
     product = relationship("Product", back_populates="inventory")

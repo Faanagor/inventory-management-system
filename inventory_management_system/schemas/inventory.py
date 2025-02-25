@@ -1,33 +1,34 @@
+from typing import Optional, Type
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationInfo, field_validator
 
 
 class InventoryBase(BaseModel):
     product_id: UUID = Field(..., description="ID del producto en el inventario")
     store_id: UUID = Field(..., description="ID de la tienda que contiene el producto")
-    quantity: int = Field(..., gt=0, description="Cantidad en stock (mayor a 0)")
-    min_stock: int = Field(..., gt=0, description="Cantidad mínima antes de alerta de stock bajo")
+    quantity: int = Field(..., gt=0, description="Cantidad inicial en stock (mayor a 0)")
+    min_stock: int = Field(..., gt=0, description="Mínimo de stock antes de alerta")
 
 
 class InventoryCreate(InventoryBase):
     """Esquema usado para crear un nuevo inventario."""
 
+    @field_validator("quantity")
     @classmethod
-    def validate_quantity(cls, value: int) -> int:
-        """Valida que la cantidad sea mayor que el stock mínimo."""
-        if value < cls.min_stock:
+    def validate_quantity(cls: Type["InventoryCreate"], value: int, info: ValidationInfo) -> int:
+        """Valida que la cantidad inicial no sea menor al stock mínimo."""
+        min_stock = info.data.get("min_stock")  # Acceder al min_stock validado
+        if min_stock is not None and value < min_stock:
             raise ValueError("La cantidad inicial no puede ser menor al stock mínimo.")
         return value
-
-    pass
 
 
 class InventoryUpdate(BaseModel):
     """Esquema para actualizar parcialmente el inventario."""
 
-    quantity: int = Field(None, gt=0, description="Nueva cantidad en stock")
-    min_stock: int = Field(None, gt=0, description="Nuevo mínimo de stock antes de alerta")
+    quantity: Optional[int] = Field(None, gt=0, description="Nueva cantidad en stock")
+    min_stock: Optional[int] = Field(None, gt=0, description="Nuevo mínimo de stock antes de alerta")
 
 
 class InventoryTransferRequest(BaseModel):
