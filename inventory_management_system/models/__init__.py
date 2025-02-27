@@ -9,8 +9,11 @@ class Base(DeclarativeBase):
 # from .inventory import Inventory
 # from .movement import Movement
 
+from .inventory import Inventory
+from .movement import Movement
+
 # Importar todos los modelos para que Alembic los detecte
-from .product import Product  # Asegúrate de que el archivo product.py existe
+from .product import Product
 
 # Opcionalmente, puedes exponer `Base` en el namespace del módulo
 __all__ = ["Base", "Product", "Inventory", "Movement"]

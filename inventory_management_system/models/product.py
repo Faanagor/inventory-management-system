@@ -19,3 +19,4 @@ class Product(Base):
 
     # 🔹 Relación con Inventory (stock ahora se maneja desde inventory)
     inventory = relationship("Inventory", back_populates="product", cascade="all, delete-orphan")
+    movements = relationship("Movement", back_populates="product")

@@ -6,6 +6,9 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from inventory_management_system.db.database import SQLALCHEMY_DATABASE_URL
 from inventory_management_system.models import Base
+from inventory_management_system.models.inventory import Inventory
+from inventory_management_system.models.movement import Movement
+from inventory_management_system.models.product import Product
 
 # Configuración de logging de Alembic
 config = context.config
@@ -39,6 +42,7 @@ def do_run_migrations(connection):
         target_metadata=target_metadata,
         transaction_per_migration=True,
         render_as_batch=True,  # Necesario para SQLite
+        compare_type=True,  # 🔹 Compara tipos para evitar eliminaciones accidentales
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -46,7 +50,12 @@ def do_run_migrations(connection):
 
 # Ejecuta el código dependiendo de si está en modo offline o online
 if context.is_offline_mode():
-    context.configure(url=SQLALCHEMY_DATABASE_URL, target_metadata=target_metadata)
+    context.configure(
+        url=SQLALCHEMY_DATABASE_URL,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        compare_type=True,  # 🔹 Asegura que no se eliminen tablas inesperadamente
+    )
     with context.begin_transaction():
         context.run_migrations()
 else:

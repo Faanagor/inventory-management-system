@@ -5,12 +5,13 @@ from typing import AsyncGenerator
 import uvicorn
 from fastapi import FastAPI
 
-from inventory_management_system.api.v1.routes import inventory, products
+from inventory_management_system.api.v1.routes import inventory, movement, products
 from inventory_management_system.db.migrations import apply_migrations
 
 app = FastAPI(title="Inventory Management System", version="1.0.0")
 app.include_router(products.router, prefix="/api/products")
 app.include_router(inventory.router, prefix="/api")
+app.include_router(movement.router, prefix="/api/movements")
 
 
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:

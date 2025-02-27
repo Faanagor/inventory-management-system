@@ -11,7 +11,7 @@ COV_FAILED_PERCENT = 80
 COV_FAILED_UNDER = --cov-fail-under=$(COV_FAILED_PERCENT)
 BLACK = $(POETRY) run black
 ISORT = $(POETRY) run isort
-FLAKE8 = $(POETRY) run flake8 --exclude=.venv
+FLAKE8 = $(POETRY) run flake8
 MYPY = $(POETRY) run mypy
 PRE_COMMIT = $(POETRY) run pre-commit
 
