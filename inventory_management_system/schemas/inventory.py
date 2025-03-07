@@ -1,7 +1,7 @@
-from typing import Optional, Type
+from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class InventoryBase(BaseModel):
@@ -14,14 +14,12 @@ class InventoryBase(BaseModel):
 class InventoryCreate(InventoryBase):
     """Esquema usado para crear un nuevo inventario."""
 
-    @field_validator("quantity")
-    @classmethod
-    def validate_quantity(cls: Type["InventoryCreate"], value: int, info: ValidationInfo) -> int:
+    @model_validator(mode="after")
+    def validate_quantity(self) -> "InventoryCreate":
         """Valida que la cantidad inicial no sea menor al stock mínimo."""
-        min_stock = info.data.get("min_stock")  # Acceder al min_stock validado
-        if min_stock is not None and value < min_stock:
+        if self.quantity < self.min_stock:
             raise ValueError("La cantidad inicial no puede ser menor al stock mínimo.")
-        return value
+        return self
 
 
 class InventoryUpdate(BaseModel):
@@ -45,5 +43,4 @@ class InventoryResponse(InventoryBase):
 
     id: UUID = Field(..., description="ID único del inventario")
 
-    class Config:
-        orm_mode = True  # Permite convertir SQLAlchemy a Pydantic automáticamente
+    model_config = ConfigDict(from_attributes=True)

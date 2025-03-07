@@ -1,9 +1,9 @@
 import enum
 import uuid
 
-from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer
+from sqlalchemy import CheckConstraint, Column, DateTime, Enum, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from sqlalchemy.sql import func
 
 from inventory_management_system.models import Base
@@ -27,3 +27,11 @@ class Movement(Base):
     type = Column(Enum(MovementType), nullable=False)
 
     product = relationship("Product", back_populates="movements")
+
+    __table_args__ = (CheckConstraint("quantity > 0", name="check_quantity_positive"),)
+
+    @validates("type")
+    def validate_type(self, key, value):
+        if value not in MovementType.__members__.values():
+            raise ValueError(f"Invalid movement type: {value}")
+        return value

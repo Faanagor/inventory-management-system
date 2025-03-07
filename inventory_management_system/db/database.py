@@ -1,18 +1,17 @@
 import os
 
 from dotenv import load_dotenv
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from inventory_management_system.models import Base
 
 # Cargar variables de entorno
 load_dotenv()
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Crear el motor de base de datos asíncrono
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True, future=True)
-AsyncSessionLocal = sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+engine = create_async_engine(DATABASE_URL, echo=True, future=True)
+AsyncSessionLocal = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
 # Crear las tablas en la base de datos (solo para pruebas, usa Alembic en producción)
@@ -22,6 +21,6 @@ async def init_db():
 
 
 # Dependencia para obtener la sesión de base de datos
-async def get_db() -> AsyncSession:
+async def get_db():
     async with AsyncSessionLocal() as session:
         yield session

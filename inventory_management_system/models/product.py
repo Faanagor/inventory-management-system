@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, Float, String
+from sqlalchemy import CheckConstraint, Column, Float, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -20,3 +20,5 @@ class Product(Base):
     # 🔹 Relación con Inventory (stock ahora se maneja desde inventory)
     inventory = relationship("Inventory", back_populates="product", cascade="all, delete-orphan")
     movements = relationship("Movement", back_populates="product")
+
+    __table_args__ = (CheckConstraint("price > 0", name="check_price_positive"),)

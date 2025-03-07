@@ -4,7 +4,7 @@ from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from inventory_management_system.db.database import SQLALCHEMY_DATABASE_URL
+from inventory_management_system.db.database import DATABASE_URL
 from inventory_management_system.models import Base
 from inventory_management_system.models.inventory import Inventory
 from inventory_management_system.models.movement import Movement
@@ -51,7 +51,7 @@ def do_run_migrations(connection):
 # Ejecuta el código dependiendo de si está en modo offline o online
 if context.is_offline_mode():
     context.configure(
-        url=SQLALCHEMY_DATABASE_URL,
+        url=DATABASE_URL,
         target_metadata=target_metadata,
         literal_binds=True,
         compare_type=True,  # 🔹 Asegura que no se eliminen tablas inesperadamente

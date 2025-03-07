@@ -6,13 +6,9 @@ class Base(DeclarativeBase):
     pass
 
 
-# from .inventory import Inventory
-# from .movement import Movement
-
+# Importar todos los modelos para que Alembic los detecte
 from .inventory import Inventory
 from .movement import Movement
-
-# Importar todos los modelos para que Alembic los detecte
 from .product import Product
 
 # Opcionalmente, puedes exponer `Base` en el namespace del módulo

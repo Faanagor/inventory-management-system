@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProductBase(BaseModel):
@@ -13,7 +13,7 @@ class ProductBase(BaseModel):
 
 
 class ProductCreate(ProductBase):
-    pass  # Igual a ProductBase, pero puede extenderse si es necesario
+    pass
 
 
 class ProductUpdate(BaseModel):
@@ -28,7 +28,6 @@ class ProductUpdate(BaseModel):
 
 class ProductResponse(ProductBase):
     id: UUID
-    stock: Optional[int] = Field(None, description="Stock total calculado desde inventory")  # 🔹 Stock opcional
+    stock: Optional[int] = Field(None, description="Stock total calculado desde inventory")
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

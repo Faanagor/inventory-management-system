@@ -36,7 +36,7 @@ test-coverage:
 
 .PHONY: test-coverage-html
 test-coverage-html:
-	$(TEST) $(COV_PACKAGE) $(COV_REPORT_HTML) $(TEST_DIR) 
+	$(TEST) $(COV_PACKAGE) $(COV_REPORT_HTML) $(APP)/$(TEST_DIR)
 
 .PHONY: format
 format:

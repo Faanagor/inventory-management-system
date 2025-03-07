@@ -15,10 +15,9 @@ router = APIRouter(tags=["Movements"])
 
 @router.post("/", response_model=MovementResponse, status_code=201)
 async def create_movement_route(movement_data: MovementCreate, db: AsyncSession = Depends(get_db)):
-    """
-    Crea un nuevo movimiento de inventario.
-    """
-    return await create_movement(db, movement_data)
+    """Crea un nuevo movimiento de inventario."""
+    print(f"Recibido en la API: {type(movement_data)}")  # 🔍 Debug
+    return await create_movement(movement_data, db)
 
 
 @router.get("/", response_model=List[MovementResponse])
@@ -33,9 +32,7 @@ async def get_all_movements_route(
     date: Optional[date] = Query(None, description="Filtrar por fecha del movimiento"),
     store_id: Optional[UUID] = Query(None, description="Filtrar por ID de la tienda"),
 ):
-    """
-    Obtiene todos los movimientos de inventario con paginación y filtros.
-    """
+    """Obtiene todos los movimientos de inventario con paginación y filtros."""
     return await get_all_movements(
         db, skip=skip, limit=limit, product_id=product_id, movement_type=movement_type, date=date, store_id=store_id
     )
@@ -43,7 +40,5 @@ async def get_all_movements_route(
 
 @router.get("/{movement_id}", response_model=MovementResponse)
 async def get_movement_by_id_route(movement_id: UUID, db: AsyncSession = Depends(get_db)):
-    """
-    Obtiene un movimiento de inventario por su ID.
-    """
+    """Obtiene un movimiento de inventario por su ID."""
     return await get_movement_by_id(db, movement_id)

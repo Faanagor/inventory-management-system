@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import CheckConstraint, Column, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -18,3 +18,8 @@ class Inventory(Base):
 
     # 🔹 Relación con Product
     product = relationship("Product", back_populates="inventory")
+
+    __table_args__ = (
+        CheckConstraint("quantity >= 0", name="check_quantity_positive"),
+        CheckConstraint("min_stock >= 0", name="check_min_stock_positive"),
+    )

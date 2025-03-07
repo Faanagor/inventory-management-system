@@ -76,8 +76,8 @@ async def _create_new_movement(data: InventoryCreate | InventoryTransferRequest,
         target_store_id = data.target_store_id
         create_type = MovementType.TRANSFER
     elif type_movement == "OUT":
-        source_store_id = None
-        target_store_id = data.store_id
+        source_store_id = data.store_id
+        target_store_id = None
         create_type = MovementType.OUT
     else:
         raise HTTPException(
