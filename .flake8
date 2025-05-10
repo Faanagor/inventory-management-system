@@ -1,0 +1,17 @@
+[flake8]
+per-file-ignores = __init__.py:F401,E402
+max-line-length = 120
+ignore = E203, W503, W504
+max-complexity = 10
+exclude =
+    .git,
+    __pycache__,
+    docs/source/conf.py,
+    old,
+    build,
+    dist,
+    .venv/,
+    alembic/,
+
+[isort]
+profile = black

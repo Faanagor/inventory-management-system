@@ -1,0 +1,68 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Dependency management (Poetry)
+poetry.lock
+.pdm.toml
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+wheels/
+
+# Logs & databases
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+# Environment variables & credentials
+*.env
+.env.local
+.env.*.local
+credentials.json
+.nexustoken
+
+# Alembic migrations (ignore caches and temporary files, but NOT migrations)
+alembic.ini
+migrations/__pycache__/
+migrations/versions/__pycache__/
+
+# Linters & Formatters
+ruff_cache/
+black/
+.flake8/
+.mypy_cache/
+pylint.log
+
+# Editor & IDE files
+.vscode/
+.idea/
+*.cfg
+
+# Docker
+*.dockerfile
+docker-compose.override.yml
+
+# Python cache & testing
+.tox/
+.nox/
+.coverage
+.coverage.*
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+cython_debug/
+
+# OS-specific files
+.DS_Store

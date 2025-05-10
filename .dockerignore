@@ -1,0 +1,45 @@
+# Ignorar entornos virtuales
+.venv/
+venv/
+
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar logs y archivos temporales
+*.log
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+
+# Ignorar configuraciones de IDEs y editores
+.vscode/
+.idea/
+*.iml
+
+# Ignorar dependencias de Poetry (se instalan en el contenedor)
+poetry.lock
+
+# Ignorar archivos de cobertura de pruebas
+htmlcov/
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+
+# Ignorar caché de pytest
+.cache/
+
+# Ignorar archivos generados por pre-commit
+.mypy_cache/
+.pytest_cache/
+
+# Ignorar bases de datos temporales
+*.db
+*.sqlite3
+
+# Ignorar Docker archivos y contenedores temporales
+docker-compose.override.yml
